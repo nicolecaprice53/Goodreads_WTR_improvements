@@ -327,6 +327,30 @@ function StarRow() {
   )
 }
 
+function StarFillRow({ value }: { value: number }) {
+  return (
+    <>
+      {[0, 1, 2, 3, 4].map((starIndex) => {
+        const fill = Math.min(1, Math.max(0, value - starIndex))
+        const visualFill = fill === 0.25 ? 0.37 : fill === 0.75 ? 0.63 : fill
+        const isFractional = fill > 0 && fill < 1
+
+        return (
+          <svg
+            className={isFractional ? 'fractional' : undefined}
+            key={starIndex}
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            style={{ clipPath: `inset(0 ${(1 - visualFill) * 100}% 0 0)` }}
+          >
+            <path d={starPath} />
+          </svg>
+        )
+      })}
+    </>
+  )
+}
+
 const ratingStep = 0.25
 const roundToStep = (value: number) => Math.round(value / ratingStep) * ratingStep
 const clampRating = (value: number) => Math.min(5, Math.max(0, roundToStep(value)))
@@ -381,11 +405,8 @@ function StarSlider({ value, onChange }: { value: number; onChange: (value: numb
         <div className="star-slider-row">
           <StarRow />
         </div>
-        <div
-          className="star-slider-row star-slider-fill"
-          style={{ clipPath: `inset(0 ${100 - value * 20}% 0 0)` }}
-        >
-          <StarRow />
+        <div className="star-slider-row star-slider-fill">
+          <StarFillRow value={value} />
         </div>
       </div>
       <span className="star-slider-value">

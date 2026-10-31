@@ -701,15 +701,19 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  transition: clip-path 80ms linear;
-}
-
-.star-slider-track.dragging .star-slider-fill {
-  transition: none;
 }
 
 .star-slider-fill svg {
   fill: #d95745;
+  transition: clip-path 100ms ease-out;
+}
+
+.star-slider-fill svg.fractional {
+  filter: drop-shadow(0 0 2px rgba(217, 87, 69, 0.7));
+}
+
+.star-slider-track.dragging .star-slider-fill svg {
+  transition: none;
 }
 
 .star-slider-value {
