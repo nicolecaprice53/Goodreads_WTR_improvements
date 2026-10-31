@@ -1,0 +1,73 @@
+{
+  "slug": "media",
+  "documents": [
+    {
+      "data": {
+        "alt": "Carmilla book cover"
+      },
+      "file": "public/covers/carmilla.jpg"
+    },
+    {
+      "data": {
+        "alt": "Yesteryear book cover"
+      },
+      "file": "public/covers/yesteryear.jpg"
+    },
+    {
+      "data": {
+        "alt": "Fight Club book cover"
+      },
+      "file": "public/covers/fight-club.jpg"
+    },
+    {
+      "data": {
+        "alt": "Martyr book cover"
+      },
+      "file": "public/covers/martyr.jpg"
+    },
+    {
+      "data": {
+        "alt": "Careless People book cover"
+      },
+      "file": "public/covers/careless-people.jpg"
+    },
+    {
+      "data": {
+        "alt": "All Fours book cover"
+      },
+      "file": "public/covers/all-fours.jpg"
+    },
+    {
+      "data": {
+        "alt": "Reader profile photo"
+      },
+      "file": "public/avatars/friend-4.jpg"
+    },
+    {
+      "data": {
+        "alt": "Reader profile photo"
+      },
+      "file": "public/avatars/friend-11.jpg"
+    },
+    {
+      "data": {
+        "alt": "Reader profile photo"
+      },
+      "file": "public/avatars/friend-7.jpg"
+    },
+    {
+      "data": {
+        "alt": "Reader profile photo"
+      },
+      "file": "public/avatars/friend-6.jpg"
+    },
+    {
+      "data": {
+        "alt": "Reader profile photo"
+      },
+      "file": "public/avatars/friend-1.jpg"
+    }
+  ],
+  "returning": true,
+  "overrideAccess": true
+}

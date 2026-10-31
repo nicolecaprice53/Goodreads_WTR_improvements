@@ -1,0 +1,360 @@
+{
+  "slug": "books",
+  "documents": [
+    {
+      "data": {
+        "title": "Down the Drain",
+        "author": "Julia Fox",
+        "averageRating": 4.35,
+        "dateAdded": "2026-10-31T04:49:00.000Z",
+        "position": 1,
+        "slug": "down-the-drain"
+      }
+    },
+    {
+      "data": {
+        "title": "Funny Story",
+        "author": "Emily Henry",
+        "averageRating": 4.18,
+        "dateAdded": "2026-10-31T04:48:00.000Z",
+        "position": 2,
+        "slug": "funny-story"
+      }
+    },
+    {
+      "data": {
+        "title": "The Secret Life of France",
+        "author": "Lucy Wadham",
+        "averageRating": 3.48,
+        "dateAdded": "2026-10-31T04:47:00.000Z",
+        "position": 3,
+        "slug": "the-secret-life-of-france"
+      }
+    },
+    {
+      "data": {
+        "title": "Into the Wild",
+        "author": "Jon Krakauer",
+        "averageRating": 4.02,
+        "dateAdded": "2026-10-31T04:46:00.000Z",
+        "position": 4,
+        "slug": "into-the-wild"
+      }
+    },
+    {
+      "data": {
+        "title": "The Vanishing Half",
+        "author": "Brit Bennett",
+        "averageRating": 4.11,
+        "dateAdded": "2026-10-31T04:45:00.000Z",
+        "position": 5,
+        "slug": "the-vanishing-half"
+      }
+    },
+    {
+      "data": {
+        "title": "None of This Is True",
+        "author": "Lisa Jewell",
+        "averageRating": 4.06,
+        "dateAdded": "2026-10-31T04:44:00.000Z",
+        "position": 6,
+        "slug": "none-of-this-is-true"
+      }
+    },
+    {
+      "data": {
+        "title": "The Goldfinch",
+        "author": "Donna Tartt",
+        "averageRating": 3.97,
+        "dateAdded": "2026-10-31T04:43:00.000Z",
+        "position": 7,
+        "slug": "the-goldfinch"
+      }
+    },
+    {
+      "data": {
+        "title": "The Covenant of Water",
+        "author": "Abraham Verghese",
+        "averageRating": 4.4,
+        "dateAdded": "2026-10-31T04:42:00.000Z",
+        "position": 8,
+        "slug": "the-covenant-of-water"
+      }
+    },
+    {
+      "data": {
+        "title": "Twenty Years Later",
+        "author": "Charlie Donlea",
+        "averageRating": 4.15,
+        "dateAdded": "2026-10-31T04:41:00.000Z",
+        "position": 9,
+        "slug": "twenty-years-later"
+      }
+    },
+    {
+      "data": {
+        "title": "Not Without My Daughter",
+        "author": "Betty Mahmoody",
+        "averageRating": 4.2,
+        "dateAdded": "2026-10-31T04:40:00.000Z",
+        "position": 10,
+        "slug": "not-without-my-daughter"
+      }
+    },
+    {
+      "data": {
+        "title": "Sorrow and Bliss",
+        "author": "Meg Mason",
+        "averageRating": 4.06,
+        "dateAdded": "2026-10-31T04:39:00.000Z",
+        "position": 11,
+        "slug": "sorrow-and-bliss"
+      }
+    },
+    {
+      "data": {
+        "title": "Migrations",
+        "author": "Charlotte McConaghy",
+        "averageRating": 4.1,
+        "dateAdded": "2026-10-31T04:38:00.000Z",
+        "position": 12,
+        "slug": "migrations"
+      }
+    },
+    {
+      "data": {
+        "title": "I Know This Much Is True",
+        "author": "Wally Lamb",
+        "averageRating": 4.21,
+        "dateAdded": "2026-10-31T04:37:00.000Z",
+        "position": 13,
+        "slug": "i-know-this-much-is-true"
+      }
+    },
+    {
+      "data": {
+        "title": "A Clockwork Orange",
+        "author": "Anthony Burgess",
+        "averageRating": 4.0,
+        "dateAdded": "2026-10-31T04:36:00.000Z",
+        "position": 14,
+        "slug": "a-clockwork-orange"
+      }
+    },
+    {
+      "data": {
+        "title": "The New Jim Crow: Mass Incarceration in the Age of Colorblindness",
+        "author": "Michelle Alexander",
+        "averageRating": 4.52,
+        "dateAdded": "2026-10-31T04:35:00.000Z",
+        "position": 15,
+        "slug": "the-new-jim-crow-mass-incarceration-in-the-age-of-colorblindness"
+      }
+    },
+    {
+      "data": {
+        "title": "Hunger: A Memoir of (My) Body",
+        "author": "Roxane Gay",
+        "averageRating": 4.17,
+        "dateAdded": "2026-10-31T04:34:00.000Z",
+        "position": 16,
+        "slug": "hunger-a-memoir-of-my-body"
+      }
+    },
+    {
+      "data": {
+        "title": "Grief Is for People",
+        "author": "Sloane Crosley",
+        "averageRating": 3.83,
+        "dateAdded": "2026-10-31T04:33:00.000Z",
+        "position": 17,
+        "slug": "grief-is-for-people"
+      }
+    },
+    {
+      "data": {
+        "title": "Carmilla",
+        "author": "J. Sheridan Le Fanu",
+        "averageRating": 3.86,
+        "ratingCount": 238664,
+        "publicationYear": 2000,
+        "pageCount": 112,
+        "dateAdded": "2026-09-06T12:00:00.000Z",
+        "position": 18,
+        "genres": [
+          "horror",
+          "lgbtq",
+          "literary-fiction"
+        ],
+        "cover": "23097c6d-4253-49f4-98f6-07471dcff1e1",
+        "slug": "carmilla"
+      }
+    },
+    {
+      "data": {
+        "title": "Yesteryear",
+        "author": "Caro Claire Burke",
+        "averageRating": 3.83,
+        "ratingCount": 1119934,
+        "publicationYear": 2026,
+        "pageCount": 336,
+        "dateAdded": "2026-09-06T11:59:00.000Z",
+        "position": 19,
+        "genres": [
+          "literary-fiction"
+        ],
+        "cover": "b2b9365c-e2ae-4697-8026-efae7eea50a4",
+        "friendRatings": [
+          {
+            "name": "Emily Chen",
+            "rating": 5,
+            "profilePhoto": "fd19bcd2-a305-4164-b189-d1c9b0ed9001",
+            "review": "Quietly unsettling and impossible to put down. I loved the slow build."
+          },
+          {
+            "name": "Priya Shah",
+            "rating": 4
+          },
+          {
+            "name": "Jordan Lee",
+            "rating": 5,
+            "profilePhoto": "b71c4217-16b3-448f-80bb-6154d5860a4b"
+          },
+          {
+            "name": "Maya Williams",
+            "rating": 4
+          },
+          {
+            "name": "Theo Martin",
+            "rating": 4
+          },
+          {
+            "name": "Lena Ortiz",
+            "rating": 5
+          },
+          {
+            "name": "Sam Rivera",
+            "rating": 4
+          }
+        ],
+        "slug": "yesteryear"
+      }
+    },
+    {
+      "data": {
+        "title": "Fight Club",
+        "author": "Chuck Palahniuk",
+        "averageRating": 4.18,
+        "ratingCount": 666917,
+        "publicationYear": 2018,
+        "pageCount": 224,
+        "dateAdded": "2025-12-25T12:00:00.000Z",
+        "position": 20,
+        "genres": [
+          "literary-fiction",
+          "humor"
+        ],
+        "cover": "afaa12d2-1c8a-4dd2-abac-a9e7490f7bb8",
+        "friendRatings": [
+          {
+            "name": "Nick Carver",
+            "rating": 5,
+            "profilePhoto": "00dfcb1d-e3be-4224-afe2-c1edec298793",
+            "review": "Brutal, funny, and much more thoughtful than I expected. An instant favorite."
+          },
+          {
+            "name": "Alex Morgan",
+            "rating": 4
+          },
+          {
+            "name": "Jon Bell",
+            "rating": 4
+          },
+          {
+            "name": "Rina Patel",
+            "rating": 5
+          }
+        ],
+        "slug": "fight-club"
+      }
+    },
+    {
+      "data": {
+        "title": "Martyr!",
+        "author": "Kaveh Akbar",
+        "averageRating": 4.13,
+        "ratingCount": 231103,
+        "publicationYear": 2024,
+        "pageCount": 352,
+        "dateAdded": "2025-05-18T12:00:00.000Z",
+        "position": 21,
+        "genres": [
+          "literary-fiction",
+          "lgbtq"
+        ],
+        "cover": "452e9cd6-8c7b-49ea-be00-b17ae6d545df",
+        "friendRatings": [
+          {
+            "name": "Suchi Rao",
+            "rating": 5,
+            "profilePhoto": "b6d1e816-e229-4361-b0d6-c74483125e62",
+            "review": "Tender, hilarious, and full of sentences I wanted to underline."
+          },
+          {
+            "name": "Daniel Kim",
+            "rating": 5,
+            "profilePhoto": "6823996c-6bd9-43bc-be95-35c35e07014f"
+          },
+          {
+            "name": "Ava Thompson",
+            "rating": 4
+          },
+          {
+            "name": "Noah Brooks",
+            "rating": 4,
+            "review": "Messy in a very human way, and ultimately so rewarding."
+          }
+        ],
+        "slug": "martyr"
+      }
+    },
+    {
+      "data": {
+        "title": "Careless People",
+        "author": "Sarah Wynn-Williams",
+        "averageRating": 4.12,
+        "ratingCount": 162433,
+        "publicationYear": 2025,
+        "pageCount": 400,
+        "dateAdded": "2025-03-11T12:00:00.000Z",
+        "position": 22,
+        "genres": [
+          "history"
+        ],
+        "cover": "8fe4cc86-a58d-4e81-bb0d-4f4b0b4fd62b",
+        "slug": "careless-people"
+      }
+    },
+    {
+      "data": {
+        "title": "All Fours",
+        "author": "Miranda July",
+        "averageRating": 3.74,
+        "ratingCount": 128401,
+        "publicationYear": 2024,
+        "pageCount": 336,
+        "dateAdded": "2025-01-09T12:00:00.000Z",
+        "position": 23,
+        "genres": [
+          "humor",
+          "literary-fiction",
+          "lgbtq"
+        ],
+        "cover": "719b1eca-a2e5-4a20-a936-f13ef4d74d62",
+        "slug": "all-fours"
+      }
+    }
+  ],
+  "returning": true,
+  "overrideAccess": true
+}
