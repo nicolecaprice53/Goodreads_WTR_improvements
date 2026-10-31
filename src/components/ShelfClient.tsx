@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, type KeyboardEvent, type PointerEvent } from 'react'
 
 import { BOOK_GENRE_LABELS } from '@/lib/genres'
 
@@ -312,6 +312,94 @@ const emptyFilters: Filters = {
   rating: 0,
 }
 
+const starPath =
+  'M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z'
+
+function StarRow() {
+  return (
+    <>
+      {[1, 2, 3, 4, 5].map((star) => (
+        <svg key={star} viewBox="0 0 24 24" aria-hidden="true">
+          <path d={starPath} />
+        </svg>
+      ))}
+    </>
+  )
+}
+
+const roundToTenth = (value: number) => Math.round(value * 10) / 10
+const clampRating = (value: number) => Math.min(5, Math.max(0, roundToTenth(value)))
+
+function StarSlider({ value, onChange }: { value: number; onChange: (value: number) => void }) {
+  const [dragging, setDragging] = useState(false)
+
+  const valueFromPointer = (event: PointerEvent<HTMLDivElement>) => {
+    const rect = event.currentTarget.getBoundingClientRect()
+    return clampRating(((event.clientX - rect.left) / rect.width) * 5)
+  }
+
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    const steps: Record<string, number> = {
+      ArrowRight: value + 0.1,
+      ArrowUp: value + 0.1,
+      ArrowLeft: value - 0.1,
+      ArrowDown: value - 0.1,
+      PageUp: value + 0.5,
+      PageDown: value - 0.5,
+      Home: 0,
+      End: 5,
+    }
+    if (!(event.key in steps)) return
+    event.preventDefault()
+    onChange(clampRating(steps[event.key]))
+  }
+
+  return (
+    <div className="star-slider">
+      <div
+        className={`star-slider-track${dragging ? ' dragging' : ''}`}
+        role="slider"
+        tabIndex={0}
+        aria-label="Minimum average rating"
+        aria-valuemin={0}
+        aria-valuemax={5}
+        aria-valuenow={value}
+        aria-valuetext={value ? `${value.toFixed(1)} stars and up` : 'Any rating'}
+        onPointerDown={(event) => {
+          event.currentTarget.setPointerCapture(event.pointerId)
+          setDragging(true)
+          onChange(valueFromPointer(event))
+        }}
+        onPointerMove={(event) => {
+          if (dragging) onChange(valueFromPointer(event))
+        }}
+        onPointerUp={() => setDragging(false)}
+        onPointerCancel={() => setDragging(false)}
+        onKeyDown={onKeyDown}
+      >
+        <div className="star-slider-row">
+          <StarRow />
+        </div>
+        <div
+          className="star-slider-row star-slider-fill"
+          style={{ clipPath: `inset(0 ${100 - value * 20}% 0 0)` }}
+        >
+          <StarRow />
+        </div>
+      </div>
+      <span className="star-slider-value">
+        {value ? (
+          <>
+            <strong>{value.toFixed(1)}</strong> &amp; up
+          </>
+        ) : (
+          'Any rating'
+        )}
+      </span>
+    </div>
+  )
+}
+
 function FilterSheet({
   initial,
   onApply,
@@ -369,19 +457,10 @@ function FilterSheet({
 
           <fieldset>
             <legend>Average Rating</legend>
-            <div className="rating-filter" aria-label="Minimum average rating">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  aria-label={`${star} stars and up`}
-                  className={draft.rating >= star ? 'selected' : ''}
-                  onClick={() => setDraft({ ...draft, rating: draft.rating === star ? 0 : star })}
-                >
-                  ★
-                </button>
-              ))}
-              <span>&amp; up</span>
-            </div>
+            <StarSlider
+              value={draft.rating}
+              onChange={(rating) => setDraft((current) => ({ ...current, rating }))}
+            />
           </fieldset>
 
           <fieldset>
@@ -595,7 +674,11 @@ export default function ShelfClient({ books }: { books: ShelfBook[] }) {
         <SortSheet selected={sort} onSelect={setSort} onClose={() => setSheet(null)} />
       )}
       {sheet === 'filter' && (
-        <FilterSheet initial={filters} onApply={setFilters} onClose={() => setSheet(null)} />
+        <FilterSheet
+          initial={filters}
+          onApply={setFilters}
+          onClose={() => setSheet(null)}
+        />
       )}
       {friendsBook && <FriendsSheet book={friendsBook} onClose={() => setFriendsBook(null)} />}
     </main>
