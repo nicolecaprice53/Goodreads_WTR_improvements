@@ -490,7 +490,7 @@ export default function ShelfClient({ books }: { books: ShelfBook[] }) {
     let result = books.filter((book) => {
       const authorMatches = book.author.toLowerCase().includes(filters.author.toLowerCase())
       const genresMatch =
-        filters.genres.length === 0 || filters.genres.some((genre) => book.genres.includes(genre))
+        filters.genres.length === 0 || filters.genres.every((genre) => book.genres.includes(genre))
       const yearMatches =
         (!filters.yearFrom || (book.year ?? 0) >= Number(filters.yearFrom)) &&
         (!filters.yearTo || (book.year ?? Number.POSITIVE_INFINITY) <= Number(filters.yearTo))
