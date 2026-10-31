@@ -327,8 +327,9 @@ function StarRow() {
   )
 }
 
-const roundToTenth = (value: number) => Math.round(value * 10) / 10
-const clampRating = (value: number) => Math.min(5, Math.max(0, roundToTenth(value)))
+const ratingStep = 0.25
+const roundToStep = (value: number) => Math.round(value / ratingStep) * ratingStep
+const clampRating = (value: number) => Math.min(5, Math.max(0, roundToStep(value)))
 
 function StarSlider({ value, onChange }: { value: number; onChange: (value: number) => void }) {
   const [dragging, setDragging] = useState(false)
@@ -340,12 +341,12 @@ function StarSlider({ value, onChange }: { value: number; onChange: (value: numb
 
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     const steps: Record<string, number> = {
-      ArrowRight: value + 0.1,
-      ArrowUp: value + 0.1,
-      ArrowLeft: value - 0.1,
-      ArrowDown: value - 0.1,
-      PageUp: value + 0.5,
-      PageDown: value - 0.5,
+      ArrowRight: value + ratingStep,
+      ArrowUp: value + ratingStep,
+      ArrowLeft: value - ratingStep,
+      ArrowDown: value - ratingStep,
+      PageUp: value + 1,
+      PageDown: value - 1,
       Home: 0,
       End: 5,
     }
@@ -364,7 +365,7 @@ function StarSlider({ value, onChange }: { value: number; onChange: (value: numb
         aria-valuemin={0}
         aria-valuemax={5}
         aria-valuenow={value}
-        aria-valuetext={value ? `${value.toFixed(1)} stars and up` : 'Any rating'}
+        aria-valuetext={value ? `${value.toFixed(2)} stars and up` : 'Any rating'}
         onPointerDown={(event) => {
           event.currentTarget.setPointerCapture(event.pointerId)
           setDragging(true)
@@ -390,7 +391,7 @@ function StarSlider({ value, onChange }: { value: number; onChange: (value: numb
       <span className="star-slider-value">
         {value ? (
           <>
-            <strong>{value.toFixed(1)}</strong> &amp; up
+            <strong>{value.toFixed(2)}</strong> &amp; up
           </>
         ) : (
           'Any rating'
@@ -400,12 +401,112 @@ function StarSlider({ value, onChange }: { value: number; onChange: (value: numb
   )
 }
 
+const maxAuthorSuggestions = 6
+
+function AuthorField({
+  authors,
+  value,
+  onChange,
+}: {
+  authors: string[]
+  value: string
+  onChange: (value: string) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [highlighted, setHighlighted] = useState(-1)
+
+  const query = value.trim().toLowerCase()
+  const suggestions = query
+    ? authors
+        .filter((author) => author.toLowerCase().includes(query) && author.toLowerCase() !== query)
+        // Names that start with what was typed come first
+        .sort(
+          (a, b) =>
+            Number(!a.toLowerCase().startsWith(query)) - Number(!b.toLowerCase().startsWith(query)),
+        )
+        .slice(0, maxAuthorSuggestions)
+    : []
+  const showSuggestions = open && suggestions.length > 0
+
+  const choose = (author: string) => {
+    onChange(author)
+    setOpen(false)
+    setHighlighted(-1)
+  }
+
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (!showSuggestions) return
+    if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      setHighlighted((index) => (index + 1) % suggestions.length)
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      setHighlighted((index) => (index <= 0 ? suggestions.length - 1 : index - 1))
+    } else if (event.key === 'Enter' && highlighted >= 0) {
+      event.preventDefault()
+      choose(suggestions[highlighted])
+    } else if (event.key === 'Escape') {
+      event.stopPropagation()
+      setOpen(false)
+    }
+  }
+
+  return (
+    <div className="field-label author-field">
+      <label htmlFor="author-filter">Author</label>
+      <input
+        id="author-filter"
+        type="text"
+        placeholder="Any author"
+        autoComplete="off"
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={showSuggestions}
+        aria-controls="author-suggestions"
+        aria-activedescendant={highlighted >= 0 ? `author-suggestion-${highlighted}` : undefined}
+        value={value}
+        onChange={(event) => {
+          onChange(event.target.value)
+          setOpen(true)
+          setHighlighted(-1)
+        }}
+        onFocus={() => setOpen(true)}
+        onBlur={() => setOpen(false)}
+        onKeyDown={onKeyDown}
+      />
+      {showSuggestions && (
+        <ul className="author-suggestions" id="author-suggestions" role="listbox">
+          {suggestions.map((author, index) => (
+            <li
+              key={author}
+              id={`author-suggestion-${index}`}
+              role="option"
+              aria-selected={index === highlighted}
+              className={index === highlighted ? 'highlighted' : ''}
+              // mousedown fires before the input's blur, so the list is still there to click
+              onMouseDown={(event) => {
+                event.preventDefault()
+                choose(author)
+              }}
+              onMouseEnter={() => setHighlighted(index)}
+            >
+              {author}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  )
+}
+
 function FilterSheet({
   initial,
+  authors,
   onApply,
   onClose,
 }: {
   initial: Filters
+  authors: string[]
   onApply: (filters: Filters) => void
   onClose: () => void
 }) {
@@ -498,15 +599,11 @@ function FilterSheet({
             />
           </label>
 
-          <label className="field-label">
-            Author
-            <input
-              type="text"
-              placeholder="Any author"
-              value={draft.author}
-              onChange={(event) => setDraft({ ...draft, author: event.target.value })}
-            />
-          </label>
+          <AuthorField
+            authors={authors}
+            value={draft.author}
+            onChange={(author) => setDraft((current) => ({ ...current, author }))}
+          />
 
           <fieldset>
             <legend>Publication Year</legend>
@@ -564,6 +661,11 @@ export default function ShelfClient({ books }: { books: ShelfBook[] }) {
     Number(Boolean(filters.yearFrom || filters.yearTo)) +
     Number(Boolean(filters.pagesFrom || filters.pagesTo)) +
     Number(Boolean(filters.rating))
+
+  const authors = useMemo(
+    () => [...new Set(books.map((book) => book.author))].sort((a, b) => a.localeCompare(b)),
+    [books],
+  )
 
   const visibleBooks = useMemo(() => {
     let result = books.filter((book) => {
@@ -635,7 +737,7 @@ export default function ShelfClient({ books }: { books: ShelfBook[] }) {
           <button className="control-row filter-row" onClick={() => setSheet('filter')}>
             <span>
               <span className="label">Filtered by:</span>
-              <strong>{activeFilterCount ? `${activeFilterCount} selected` : 'N/A'}</strong>
+              <strong>{activeFilterCount ? `${activeFilterCount} selected` : 'None'}</strong>
             </span>
             <span className="filter-icon">
               <Icon name="filter" size={21} />
@@ -676,6 +778,7 @@ export default function ShelfClient({ books }: { books: ShelfBook[] }) {
       {sheet === 'filter' && (
         <FilterSheet
           initial={filters}
+          authors={authors}
           onApply={setFilters}
           onClose={() => setSheet(null)}
         />

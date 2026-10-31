@@ -608,6 +608,37 @@
   font-size: 0.9rem;
 }
 
+.author-field {
+  position: relative;
+}
+
+.author-suggestions {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  overflow: hidden;
+  padding: 4px 0;
+  background: #25211d;
+  border: 1px solid #67635c;
+  border-radius: 7px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  font-family: 'Libre Franklin', Arial, sans-serif;
+}
+
+.author-suggestions li {
+  padding: 11px 13px;
+  color: #dbd7cf;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.author-suggestions li.highlighted {
+  color: #f5f1e9;
+  background: #34302b;
+}
+
 .field-label input:focus,
 .range-row input:focus {
   border-color: #86c5c6;
