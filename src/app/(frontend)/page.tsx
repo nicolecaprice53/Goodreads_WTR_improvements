@@ -37,6 +37,7 @@ export default async function HomePage() {
       rating: Math.round(friend.rating) === 5 ? (5 as const) : (4 as const),
       photo: mediaURL(friend.profilePhoto),
       review: friend.review ?? undefined,
+      ratedAt: friend.ratedAt ?? undefined,
     }))
 
     return {

@@ -124,6 +124,13 @@ export const Books: CollectionConfig = {
           max: 5,
         },
         {
+          name: 'ratedAt',
+          type: 'date',
+          admin: {
+            date: { pickerAppearance: 'dayOnly' },
+          },
+        },
+        {
           name: 'profilePhoto',
           type: 'upload',
           relationTo: 'media',

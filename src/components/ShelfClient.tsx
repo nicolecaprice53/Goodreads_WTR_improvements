@@ -26,6 +26,7 @@ type FriendRating = {
   rating: 4 | 5
   photo?: string
   review?: string
+  ratedAt?: string
 }
 
 type SortKey =
@@ -187,9 +188,6 @@ function BookRow({
             <span>
               <strong>{book.friend.split(' enjoyed')[0]}</strong> enjoyed this book
             </span>
-            <span className="friend-chevron" aria-hidden="true">
-              ›
-            </span>
           </button>
         )}
       </div>
@@ -197,28 +195,54 @@ function BookRow({
   )
 }
 
+const timeUnits: [Intl.RelativeTimeFormatUnit, number][] = [
+  ['year', 365 * 24 * 60 * 60 * 1000],
+  ['month', 30 * 24 * 60 * 60 * 1000],
+  ['week', 7 * 24 * 60 * 60 * 1000],
+  ['day', 24 * 60 * 60 * 1000],
+  ['hour', 60 * 60 * 1000],
+  ['minute', 60 * 1000],
+]
+
+function timeAgo(date: string) {
+  const elapsed = Date.now() - new Date(date).getTime()
+  const format = new Intl.RelativeTimeFormat('en', { numeric: 'always' })
+  for (const [unit, ms] of timeUnits) {
+    if (elapsed >= ms) return format.format(-Math.floor(elapsed / ms), unit)
+  }
+  return 'just now'
+}
+
 function FriendsSheet({ book, onClose }: { book: ShelfBook; onClose: () => void }) {
   return (
     <div className="sheet-wrap" role="dialog" aria-modal="true" aria-labelledby="friends-title">
-      <button className="sheet-scrim" aria-label="Close friend ratings" onClick={onClose} />
+      <button className="sheet-scrim" aria-label="Close friend ratings and reviews" onClick={onClose} />
       <section className="sheet friends-sheet">
-        <header className="sheet-header">
-          <button className="outline-button" onClick={onClose}>
-            Close
+        <header className="friends-header">
+          <h2 id="friends-title">Friend Ratings and Reviews</h2>
+          <button className="friends-close" aria-label="Close" onClick={onClose}>
+            <Icon name="close" size={22} />
           </button>
-          <h2 id="friends-title">Friend Ratings</h2>
-          <span className="header-spacer" />
         </header>
         <div className="friends-list">
           {book.friendRatings?.map((friend) => (
             <div className="friend-rating-row" key={friend.name}>
               <ProfilePicture friend={friend} className="friend-avatar" />
               <div className="friend-review">
-                <div className="friend-review-heading">
-                  <strong>{friend.name}</strong>
-                  <Stars rating={friend.rating} />
+                <p className="friend-review-heading">
+                  <strong>{friend.name}</strong> rated it <Stars rating={friend.rating} />
+                </p>
+                {friend.ratedAt && (
+                  <p className="friend-review-time" suppressHydrationWarning>
+                    {timeAgo(friend.ratedAt)}
+                  </p>
+                )}
+                {friend.review &&<p className="friend-review-text">{friend.review}</p>}
+                <div className="friend-review-actions">
+                  <button>Like</button>
+                  <span className="dot">·</span>
+                  <button>Comment</button>
                 </div>
-                {friend.review && <p>{friend.review}</p>}
               </div>
             </div>
           ))}
@@ -298,6 +322,8 @@ function FilterSheet({
   onClose: () => void
 }) {
   const [draft, setDraft] = useState<Filters>(initial)
+  // Display-only: not part of Filters, so it doesn't affect results
+  const [mutualShelves, setMutualShelves] = useState('')
 
   const toggleGenre = (genre: string) =>
     setDraft((current) => ({
@@ -341,6 +367,58 @@ function FilterSheet({
             </div>
           </fieldset>
 
+          <fieldset>
+            <legend>Average Rating</legend>
+            <div className="rating-filter" aria-label="Minimum average rating">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <button
+                  key={star}
+                  aria-label={`${star} stars and up`}
+                  className={draft.rating >= star ? 'selected' : ''}
+                  onClick={() => setDraft({ ...draft, rating: draft.rating === star ? 0 : star })}
+                >
+                  ★
+                </button>
+              ))}
+              <span>&amp; up</span>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Pages</legend>
+            <div className="range-row">
+              <label>
+                <span>From</span>
+                <input
+                  inputMode="numeric"
+                  placeholder="Any"
+                  value={draft.pagesFrom}
+                  onChange={(event) => setDraft({ ...draft, pagesFrom: event.target.value })}
+                />
+              </label>
+              <span className="range-dash">—</span>
+              <label>
+                <span>To</span>
+                <input
+                  inputMode="numeric"
+                  placeholder="Any"
+                  value={draft.pagesTo}
+                  onChange={(event) => setDraft({ ...draft, pagesTo: event.target.value })}
+                />
+              </label>
+            </div>
+          </fieldset>
+
+          <label className="field-label">
+            Mutual Shelves
+            <input
+              type="text"
+              placeholder="Any shelf"
+              value={mutualShelves}
+              onChange={(event) => setMutualShelves(event.target.value)}
+            />
+          </label>
+
           <label className="field-label">
             Author
             <input
@@ -373,48 +451,6 @@ function FilterSheet({
                   onChange={(event) => setDraft({ ...draft, yearTo: event.target.value })}
                 />
               </label>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Pages</legend>
-            <div className="range-row">
-              <label>
-                <span>From</span>
-                <input
-                  inputMode="numeric"
-                  placeholder="Any"
-                  value={draft.pagesFrom}
-                  onChange={(event) => setDraft({ ...draft, pagesFrom: event.target.value })}
-                />
-              </label>
-              <span className="range-dash">—</span>
-              <label>
-                <span>To</span>
-                <input
-                  inputMode="numeric"
-                  placeholder="Any"
-                  value={draft.pagesTo}
-                  onChange={(event) => setDraft({ ...draft, pagesTo: event.target.value })}
-                />
-              </label>
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend>Average Rating</legend>
-            <div className="rating-filter" aria-label="Minimum average rating">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  aria-label={`${star} stars and up`}
-                  className={draft.rating >= star ? 'selected' : ''}
-                  onClick={() => setDraft({ ...draft, rating: draft.rating === star ? 0 : star })}
-                >
-                  ★
-                </button>
-              ))}
-              <span>&amp; up</span>
             </div>
           </fieldset>
         </div>
