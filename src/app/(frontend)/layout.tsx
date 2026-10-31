@@ -15,6 +15,15 @@ const description =
   "A personal Want to Read shelf"
 const favicon = makeSiteSettings.icons?.icon
 const socialImage = makeSiteSettings.openGraph?.image
+// Runs before first paint so the page never flashes the wrong theme
+const themeScript = `try {
+  var theme = localStorage.getItem("theme");
+  if (theme !== "light" && theme !== "dark") {
+    theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  }
+  document.documentElement.dataset.theme = theme;
+} catch (e) {}`
+
 const googleAnalyticsId = sanitizeHtmlAttribute(
   makeSiteSettings.analytics?.googleAnalyticsId,
 )
@@ -53,8 +62,9 @@ export default function RootLayout({
   const customScripts = makeSiteSettings.customScripts
 
   return (
-    <html lang={language}>
+    <html lang={language} suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {renderHeadCustomCode(customScripts?.headStart, "head-start")}
         {renderHeadCustomCode(customScripts?.headEnd, "head-end")}
       </head>

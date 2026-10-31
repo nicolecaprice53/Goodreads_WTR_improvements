@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image'
-import { useMemo, useState, type KeyboardEvent, type PointerEvent } from 'react'
+import { useEffect, useMemo, useState, type KeyboardEvent, type PointerEvent } from 'react'
 
 import { BOOK_GENRE_LABELS } from '@/lib/genres'
 
@@ -58,11 +58,13 @@ const sortOptions: SortKey[] = [
 
 const genreOptions = BOOK_GENRE_LABELS
 
+type Theme = 'light' | 'dark'
+
 function Icon({
   name,
   size = 24,
 }: {
-  name: 'back' | 'more' | 'filter' | 'check' | 'close' | 'sort'
+  name: 'back' | 'more' | 'filter' | 'check' | 'close' | 'sort' | 'sun' | 'moon'
   size?: number
 }) {
   const paths = {
@@ -78,6 +80,13 @@ function Icon({
     check: <path d="m5 12 4 4L19 6" />,
     close: <path d="M6 6l12 12M18 6 6 18" />,
     sort: <path d="M12 5v14m0 0-5-5m5 5 5-5" />,
+    sun: (
+      <>
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+      </>
+    ),
+    moon: <path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z" />,
   }
 
   return (
@@ -675,6 +684,21 @@ export default function ShelfClient({ books }: { books: ShelfBook[] }) {
   const [sheet, setSheet] = useState<'sort' | 'filter' | null>(null)
   const [friendsBook, setFriendsBook] = useState<ShelfBook | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [theme, setTheme] = useState<Theme>('dark')
+
+  // The layout's inline script has already applied the theme; mirror it into state
+  useEffect(() => {
+    if (document.documentElement.dataset.theme === 'light') setTheme('light')
+  }, [])
+
+  const toggleTheme = () => {
+    const next: Theme = theme === 'dark' ? 'light' : 'dark'
+    document.documentElement.dataset.theme = next
+    try {
+      localStorage.setItem('theme', next)
+    } catch {}
+    setTheme(next)
+  }
 
   const activeFilterCount =
     filters.genres.length +
@@ -792,6 +816,15 @@ export default function ShelfClient({ books }: { books: ShelfBook[] }) {
           )}
         </section>
       </section>
+
+      <button
+        className="theme-toggle"
+        aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+        onClick={toggleTheme}
+      >
+        <Icon name={theme === 'dark' ? 'sun' : 'moon'} size={18} />
+        <span>{theme === 'dark' ? 'Light' : 'Dark'}</span>
+      </button>
 
       {sheet === 'sort' && (
         <SortSheet selected={sort} onSelect={setSort} onClose={() => setSheet(null)} />
