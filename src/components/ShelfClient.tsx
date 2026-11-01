@@ -1,7 +1,14 @@
 'use client'
 
 import Image from 'next/image'
-import { useEffect, useMemo, useState, type KeyboardEvent, type PointerEvent } from 'react'
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+} from 'react'
 
 import { BOOK_GENRE_LABELS } from '@/lib/genres'
 
@@ -433,8 +440,6 @@ function StarSlider({ value, onChange }: { value: number; onChange: (value: numb
   )
 }
 
-const maxAuthorSuggestions = 6
-
 function AuthorField({
   authors,
   value,
@@ -448,17 +453,17 @@ function AuthorField({
   const [highlighted, setHighlighted] = useState(-1)
 
   const query = value.trim().toLowerCase()
-  const suggestions = query
-    ? authors
-        .filter((author) => author.toLowerCase().includes(query) && author.toLowerCase() !== query)
+  const exactMatch = authors.some((author) => author.toLowerCase() === query)
+  const suggestions = exactMatch
+    ? []
+    : authors
+        .filter((author) => author.toLowerCase().includes(query))
         // Names that start with what was typed come first
         .sort(
           (a, b) =>
             Number(!a.toLowerCase().startsWith(query)) - Number(!b.toLowerCase().startsWith(query)),
         )
-        .slice(0, maxAuthorSuggestions)
-    : []
-  const showSuggestions = open && suggestions.length > 0
+  const showSuggestions = open && !exactMatch && (suggestions.length > 0 || query !== '')
 
   const choose = (author: string) => {
     onChange(author)
@@ -467,7 +472,7 @@ function AuthorField({
   }
 
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (!showSuggestions) return
+    if (!showSuggestions || !suggestions.length) return
     if (event.key === 'ArrowDown') {
       event.preventDefault()
       setHighlighted((index) => (index + 1) % suggestions.length)
@@ -508,23 +513,27 @@ function AuthorField({
       />
       {showSuggestions && (
         <ul className="author-suggestions" id="author-suggestions" role="listbox">
-          {suggestions.map((author, index) => (
-            <li
-              key={author}
-              id={`author-suggestion-${index}`}
-              role="option"
-              aria-selected={index === highlighted}
-              className={index === highlighted ? 'highlighted' : ''}
-              // mousedown fires before the input's blur, so the list is still there to click
-              onMouseDown={(event) => {
-                event.preventDefault()
-                choose(author)
-              }}
-              onMouseEnter={() => setHighlighted(index)}
-            >
-              {author}
-            </li>
-          ))}
+          {suggestions.length ? (
+            suggestions.map((author, index) => (
+              <li
+                key={author}
+                id={`author-suggestion-${index}`}
+                role="option"
+                aria-selected={index === highlighted}
+                className={index === highlighted ? 'highlighted' : ''}
+                // mousedown fires before the input's blur, so the list is still there to click
+                onMouseDown={(event) => {
+                  event.preventDefault()
+                  choose(author)
+                }}
+                onMouseEnter={() => setHighlighted(index)}
+              >
+                {author}
+              </li>
+            ))
+          ) : (
+            <li className="no-match">No authors in this list match “{value.trim()}”</li>
+          )}
         </ul>
       )}
     </div>
@@ -544,6 +553,7 @@ function ShelvesField({
   const [query, setQuery] = useState('')
   const [open, setOpen] = useState(false)
   const [highlighted, setHighlighted] = useState(-1)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   const search = query.trim().toLowerCase()
   const suggestions = userShelves
@@ -555,6 +565,9 @@ function ShelvesField({
     onChange([...selected, shelf])
     setQuery('')
     setHighlighted(-1)
+    // Most people pick a single shelf, so leave the field once one is chosen
+    setOpen(false)
+    inputRef.current?.blur()
   }
 
   const remove = (shelf: string) => onChange(selected.filter((item) => item !== shelf))
@@ -584,7 +597,7 @@ function ShelvesField({
       <label htmlFor="shelves-filter">Mutual Shelves</label>
       <div
         className="shelf-input"
-        onClick={(event) => event.currentTarget.querySelector('input')?.focus()}
+        onClick={() => inputRef.current?.focus()}
       >
         {selected.map((shelf) => (
           <span className="shelf-chip" key={shelf}>
@@ -592,16 +605,20 @@ function ShelvesField({
             <button
               type="button"
               aria-label={`Remove ${shelf} shelf filter`}
-              onClick={() => remove(shelf)}
+              onClick={(event) => {
+                event.stopPropagation()
+                remove(shelf)
+              }}
             >
               <Icon name="close" size={14} />
             </button>
           </span>
         ))}
         <input
+          ref={inputRef}
           id="shelves-filter"
           type="text"
-          placeholder={selected.length ? 'Add another shelf…' : 'Search your shelves'}
+          placeholder={selected.length ? '' : 'Select multiple shelves'}
           autoComplete="off"
           role="combobox"
           aria-autocomplete="list"
@@ -643,11 +660,6 @@ function ShelvesField({
           )}
         </ul>
       )}
-      <p className="field-hint">
-        {selected.length
-          ? `${selected.length} selected · add more to narrow to books on every shelf`
-          : 'Select one or more shelves'}
-      </p>
     </div>
   )
 }
