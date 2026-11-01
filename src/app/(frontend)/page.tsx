@@ -23,6 +23,11 @@ const getBooks = unstable_cache(
   },
 )
 
+function friendSuffix(otherCount: number) {
+  if (otherCount === 0) return ''
+  return ` and ${otherCount} ${otherCount === 1 ? 'other' : 'others'}`
+}
+
 function mediaURL(value: unknown) {
   if (typeof value !== 'object' || value === null || !('url' in value)) return undefined
   return typeof value.url === 'string' ? value.url : undefined
@@ -60,7 +65,7 @@ export default async function HomePage() {
       cover: mediaURL(book.cover),
       friend:
         friendRatings && friendRatings.length > 0
-          ? `${friendRatings[0].name.split(' ')[0]} and ${friendRatings.length - 1} others enjoyed this book`
+          ? `${friendRatings[0].name.split(' ')[0]}${friendSuffix(friendRatings.length - 1)} enjoyed this book`
           : undefined,
       friendRatings,
     }

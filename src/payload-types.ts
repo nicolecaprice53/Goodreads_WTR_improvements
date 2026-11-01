@@ -297,7 +297,6 @@ export interface Book {
         | 'philosophy'
         | 'poetry'
         | 'politics'
-        | 'psychological-thriller'
         | 'psychology'
         | 'religion-spirituality'
         | 'romance'
@@ -308,10 +307,7 @@ export interface Book {
         | 'sports'
         | 'thriller'
         | 'travel'
-        | 'true-crime'
-        | 'western'
         | 'young-adult'
-        | 'young-teen'
       )[]
     | null;
   cover?: (string | null) | Media;

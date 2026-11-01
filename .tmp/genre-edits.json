@@ -1,0 +1,23 @@
+[
+ {
+  "id": "5fdcf70a-1946-4765-8e49-fd2e43d8bbb9",
+  "slug": "fight-club",
+  "title": "Fight Club",
+  "genres": [
+   "fiction",
+   "classics",
+   "literary-fiction",
+   "thriller"
+  ]
+ },
+ {
+  "id": "fca4633a-4e5c-4b0b-957d-a9b3187cec0a",
+  "slug": "none-of-this-is-true",
+  "title": "None of This Is True",
+  "genres": [
+   "thriller",
+   "mystery",
+   "crime"
+  ]
+ }
+]

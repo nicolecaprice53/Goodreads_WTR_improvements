@@ -32,7 +32,6 @@ export const BOOK_GENRES = [
   ['philosophy', 'Philosophy'],
   ['poetry', 'Poetry'],
   ['politics', 'Politics'],
-  ['psychological-thriller', 'Psychological Thriller'],
   ['psychology', 'Psychology'],
   ['religion-spirituality', 'Religion & Spirituality'],
   ['romance', 'Romance'],
@@ -43,10 +42,7 @@ export const BOOK_GENRES = [
   ['sports', 'Sports'],
   ['thriller', 'Thriller'],
   ['travel', 'Travel'],
-  ['true-crime', 'True Crime'],
-  ['western', 'Western'],
   ['young-adult', 'Young Adult'],
-  ['young-teen', 'Young Teen'],
 ] as const
 
 export const BOOK_GENRE_LABELS = BOOK_GENRES.map(([, label]) => label)
