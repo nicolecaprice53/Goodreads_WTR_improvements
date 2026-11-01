@@ -303,6 +303,7 @@ function SortSheet({
 
 type Filters = {
   genres: string[]
+  shelves: string[]
   author: string
   yearFrom: string
   yearTo: string
@@ -313,6 +314,7 @@ type Filters = {
 
 const emptyFilters: Filters = {
   genres: [],
+  shelves: [],
   author: '',
   yearFrom: '',
   yearTo: '',
@@ -529,6 +531,127 @@ function AuthorField({
   )
 }
 
+// Prototype: stands in for the user's own shelves, and every book is on all of them
+const userShelves = ['owned', 'library', 'spotify']
+
+function ShelvesField({
+  selected,
+  onChange,
+}: {
+  selected: string[]
+  onChange: (shelves: string[]) => void
+}) {
+  const [query, setQuery] = useState('')
+  const [open, setOpen] = useState(false)
+  const [highlighted, setHighlighted] = useState(-1)
+
+  const search = query.trim().toLowerCase()
+  const suggestions = userShelves
+    .filter((shelf) => !selected.includes(shelf) && shelf.includes(search))
+    .sort((a, b) => Number(!a.startsWith(search)) - Number(!b.startsWith(search)))
+  const showList = open && (suggestions.length > 0 || search !== '')
+
+  const add = (shelf: string) => {
+    onChange([...selected, shelf])
+    setQuery('')
+    setHighlighted(-1)
+  }
+
+  const remove = (shelf: string) => onChange(selected.filter((item) => item !== shelf))
+
+  const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Backspace' && !query && selected.length) {
+      remove(selected[selected.length - 1])
+    } else if (!showList || !suggestions.length) {
+      return
+    } else if (event.key === 'ArrowDown') {
+      event.preventDefault()
+      setHighlighted((index) => (index + 1) % suggestions.length)
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault()
+      setHighlighted((index) => (index <= 0 ? suggestions.length - 1 : index - 1))
+    } else if (event.key === 'Enter' && (highlighted >= 0 || suggestions.length === 1)) {
+      event.preventDefault()
+      add(suggestions[Math.max(highlighted, 0)])
+    } else if (event.key === 'Escape') {
+      event.stopPropagation()
+      setOpen(false)
+    }
+  }
+
+  return (
+    <div className="field-label author-field shelves-field">
+      <label htmlFor="shelves-filter">Mutual Shelves</label>
+      <div
+        className="shelf-input"
+        onClick={(event) => event.currentTarget.querySelector('input')?.focus()}
+      >
+        {selected.map((shelf) => (
+          <span className="shelf-chip" key={shelf}>
+            {shelf}
+            <button
+              type="button"
+              aria-label={`Remove ${shelf} shelf filter`}
+              onClick={() => remove(shelf)}
+            >
+              <Icon name="close" size={14} />
+            </button>
+          </span>
+        ))}
+        <input
+          id="shelves-filter"
+          type="text"
+          placeholder={selected.length ? 'Add another shelf…' : 'Search your shelves'}
+          autoComplete="off"
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={showList}
+          aria-controls="shelf-suggestions"
+          aria-activedescendant={highlighted >= 0 ? `shelf-suggestion-${highlighted}` : undefined}
+          value={query}
+          onChange={(event) => {
+            setQuery(event.target.value)
+            setOpen(true)
+            setHighlighted(-1)
+          }}
+          onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
+          onKeyDown={onKeyDown}
+        />
+      </div>
+      {showList && (
+        <ul className="author-suggestions" id="shelf-suggestions" role="listbox">
+          {suggestions.length ? (
+            suggestions.map((shelf, index) => (
+              <li
+                key={shelf}
+                id={`shelf-suggestion-${index}`}
+                role="option"
+                aria-selected={index === highlighted}
+                className={index === highlighted ? 'highlighted' : ''}
+                onMouseDown={(event) => {
+                  event.preventDefault()
+                  add(shelf)
+                }}
+                onMouseEnter={() => setHighlighted(index)}
+              >
+                {shelf}
+              </li>
+            ))
+          ) : (
+            <li className="no-match">No shelves match “{query.trim()}”</li>
+          )}
+        </ul>
+      )}
+      <p className="field-hint">
+        {selected.length
+          ? `${selected.length} selected · add more to narrow to books on every shelf`
+          : 'Select one or more shelves'}
+      </p>
+    </div>
+  )
+}
+
 function FilterSheet({
   initial,
   authors,
@@ -541,8 +664,6 @@ function FilterSheet({
   onClose: () => void
 }) {
   const [draft, setDraft] = useState<Filters>(initial)
-  // Display-only: not part of Filters, so it doesn't affect results
-  const [mutualShelves, setMutualShelves] = useState('')
 
   const toggleGenre = (genre: string) =>
     setDraft((current) => ({
@@ -619,15 +740,10 @@ function FilterSheet({
             </div>
           </fieldset>
 
-          <label className="field-label">
-            Mutual Shelves
-            <input
-              type="text"
-              placeholder="Any shelf"
-              value={mutualShelves}
-              onChange={(event) => setMutualShelves(event.target.value)}
-            />
-          </label>
+          <ShelvesField
+            selected={draft.shelves}
+            onChange={(shelves) => setDraft((current) => ({ ...current, shelves }))}
+          />
 
           <AuthorField
             authors={authors}
@@ -702,6 +818,7 @@ export default function ShelfClient({ books }: { books: ShelfBook[] }) {
 
   const activeFilterCount =
     filters.genres.length +
+    filters.shelves.length +
     Number(Boolean(filters.author)) +
     Number(Boolean(filters.yearFrom || filters.yearTo)) +
     Number(Boolean(filters.pagesFrom || filters.pagesTo)) +
