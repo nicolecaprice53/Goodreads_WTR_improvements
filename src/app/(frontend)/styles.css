@@ -962,6 +962,13 @@
   outline-offset: 2px;
 }
 
+/* Touch devices are locked to light mode, so there's nothing to toggle */
+@media (hover: none) and (pointer: coarse) {
+  .theme-toggle {
+    display: none;
+  }
+}
+
 .empty-state {
   display: grid;
   min-height: 440px;

@@ -15,10 +15,13 @@ const description =
   "A personal Want to Read shelf"
 const favicon = makeSiteSettings.icons?.icon
 const socialImage = makeSiteSettings.openGraph?.image
-// Runs before first paint so the page never flashes the wrong theme
+// Runs before first paint so the page never flashes the wrong theme.
+// Touch devices always get light mode; the light/dark toggle is desktop-only.
 const themeScript = `try {
   var theme = localStorage.getItem("theme");
-  if (theme !== "light" && theme !== "dark") {
+  if (matchMedia("(hover: none) and (pointer: coarse)").matches) {
+    theme = "light";
+  } else if (theme !== "light" && theme !== "dark") {
     theme = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
   }
   document.documentElement.dataset.theme = theme;
